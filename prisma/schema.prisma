@@ -14,9 +14,14 @@ model User {
   id        String   @id @default(cuid())
   email     String   @unique
   password  String
+  name      String?
+  role      String   @default("USER")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   projects  Project[] // Relation to projects
+  tasks     Task[]   // Tasks created by the user
+
+  @@index([email])
 }
 
 model Project {
@@ -25,6 +30,29 @@ model Project {
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  owner       User     @relation(fields: [ownerId], references: [id])
   ownerId     String
+  owner       User     @relation(fields: [ownerId], references: [id])
+  tasks       Task[]
+
+  @@index([ownerId])
+}
+
+model Task {
+  id            String   @id @default(cuid())
+  title         String
+  description   String?
+  status        String   @default("TODO") // TODO, IN_PROGRESS, DONE
+  priority      String   @default("MEDIUM") // LOW, MEDIUM, HIGH
+  dueDate       DateTime?
+  estimatedTime Int?     // in minutes
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  projectId     String
+  project       Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  creatorId     String
+  creator       User     @relation(fields: [creatorId], references: [id])
+
+  @@index([projectId])
+  @@index([creatorId])
 } 
