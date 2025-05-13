@@ -1,11 +1,12 @@
 import 'server-only';
-
+//DATA ACCESS LAYER - Implementation for a more secure application
 import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
 import { NextResponse } from 'next/server';
 import { cache } from 'react';
 import { redirect } from 'next/navigation';
 import { db } from './db';
+import { Task } from '@prisma/client';
 
 
 export const verifySession = cache(async () => {
@@ -48,3 +49,27 @@ export const getProject = cache(async(projectId: string) => {
     return null
   }
 });
+
+export const createTask = async (task: any) => {
+  enum ERROR_TYPES {
+    NOT_CREATED = -10,
+    NOT_AUTHORIZED = -20
+  }
+  const { isAuthorized, userId } = await verifySession();
+  if(!isAuthorized) return ERROR_TYPES.NOT_AUTHORIZED
+
+  try {
+    const taskCreated = await db.task.create({
+      data: {
+        ...task,
+        creatorId: userId
+      }
+    });
+
+    return taskCreated
+  }
+  catch (e) {
+    console.log('Failed to create task', e);
+    return ERROR_TYPES.NOT_CREATED
+  }
+}
