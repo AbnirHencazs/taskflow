@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
+import { revalidateProjectPageData } from 'app/lib/actions';
 
 const taskValidationSchema = z.object({
   title: z.string().min(2, 'Task title is required').max(32, 'Title must be no longer than 32 characters'),
@@ -51,7 +52,7 @@ export default function AddTaskButton({ projectId }: { projectId: string }) {
       }
 
       setIsOpen(false);
-      router.refresh(); // This will trigger a revalidation of the server component
+      revalidateProjectPageData(projectId);
     } catch (error) {
       if (error instanceof z.ZodError) {
         const fieldErrors: Record<string, string> = {};
@@ -79,8 +80,9 @@ export default function AddTaskButton({ projectId }: { projectId: string }) {
       </button>
 
       {isOpen && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+        <div className="fixed inset-0 flex items-center justify-center p-4 z-50">
+          <div className="fixed inset-0 bg-gray-500/30" onClick={() => setIsOpen(false)} />
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-medium text-gray-900">Add New Task</h3>
               <button
