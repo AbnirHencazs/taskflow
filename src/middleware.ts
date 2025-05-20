@@ -10,8 +10,10 @@ export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname
   const isProtectedRoute = protectedRoutes.includes(path)
   const isPublicRoute = publicRoutes.includes(path)
+  const isHomePage = path === '/'
   const cookieStore = await cookies();
   const token = cookieStore.get('auth-token');
+
   if(token) {
     try {
       const secret = new TextEncoder().encode(
@@ -19,6 +21,12 @@ export async function middleware(request: NextRequest) {
       );
       const { payload } = await jwtVerify(token.value, secret);
       const isAuthenticated = payload?.userId;
+
+      // Redirect authenticated users from home page to dashboard
+      if (isHomePage && isAuthenticated) {
+        return NextResponse.redirect(new URL('/dashboard', request.nextUrl))
+      }
+
       if (isProtectedRoute && !isAuthenticated) {
         return NextResponse.redirect(new URL('/login', request.nextUrl))
       }
