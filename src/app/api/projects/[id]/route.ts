@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getProject } from 'app/lib/dal';
+import { getProject } from 'lib/dal';
 
 export async function GET(
   request: Request,

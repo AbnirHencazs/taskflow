@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
-import { db } from 'app/lib/db';
+import { db } from 'lib/db';
 
 export async function GET() {
   try {

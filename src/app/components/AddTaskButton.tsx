@@ -2,8 +2,7 @@
 
 import { useState } from 'react';
 import { z } from 'zod';
-import { useRouter } from 'next/navigation';
-import { revalidateProjectPageData } from 'app/lib/actions';
+import { revalidateProjectPageData } from 'lib/actions';
 
 const taskValidationSchema = z.object({
   title: z.string().min(2, 'Task title is required').max(32, 'Title must be no longer than 32 characters'),
@@ -13,13 +12,10 @@ const taskValidationSchema = z.object({
   estimatedTime: z.number().int().min(0, 'Estimated time must be a positive number').optional(),
 });
 
-type TaskFormData = z.infer<typeof taskValidationSchema>;
-
 export default function AddTaskButton({ projectId }: { projectId: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

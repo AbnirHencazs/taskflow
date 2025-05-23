@@ -1,4 +1,4 @@
-import { createTask } from 'app/lib/dal';
+import { createTask } from 'lib/dal';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
@@ -15,8 +15,9 @@ const createTaskValidationSchema = z.object({
   estimatedTime: z.number().int().min(0, 'Estimated time must be a positive number').optional(),
   order: z.number().int().min(0, 'Order must be a positive number').default(0),
   projectId: z.string().min(1, 'Project ID is required'),
+});
 
-})
+export type createTaskValidationSchema = z.infer<typeof createTaskValidationSchema>;
 
 export async function POST(request: Request) {
   try {

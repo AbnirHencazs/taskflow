@@ -2,9 +2,7 @@ import { errors, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-
-const protectedRoutes = ['/dashboard', 'projects/*']
-const publicRoutes = ['/login', '/sign-up', '/']
+import { protectedRoutes, publicRoutes } from 'lib/constants';
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname

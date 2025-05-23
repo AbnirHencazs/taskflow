@@ -51,15 +51,6 @@ export default function DashboardPage() {
     fetchData();
   }, [router]);
 
-  const handleLogout = async () => {
-    try {
-      await fetch('/api/logout', { method: 'POST' });
-      router.push('/login');
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
-  };
-
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -70,24 +61,6 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <h1 className="text-xl font-semibold">Dashboard</h1>
-            </div>
-            <div className="flex items-center">
-              <button
-                onClick={handleLogout}
-                className="ml-4 px-4 py-2 text-sm text-gray-700 hover:text-gray-900"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
-
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           {/* User Info Card */}
@@ -119,7 +92,7 @@ export default function DashboardPage() {
 
             {projects.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-gray-500">You haven't created any projects yet.</p>
+                <p className="text-gray-500">You haven&apos;t created any projects yet.</p>
                 <button
                   onClick={() => router.push('/projects/new')}
                   className="mt-4 text-indigo-600 hover:text-indigo-700"
