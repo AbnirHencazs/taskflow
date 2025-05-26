@@ -15,6 +15,11 @@ export default function TaskCard({ task }: TaskCardProps) {
     setIsModalOpen(true);
   };
 
+  // Format date in a consistent way that doesn't depend on locale
+  const formatDate = (date: Date) => {
+    return new Date(date).toISOString().split('T')[0];
+  };
+
   return (
     <>
       <div
@@ -41,7 +46,7 @@ export default function TaskCard({ task }: TaskCardProps) {
           </span>
         </div>
         <div className="mt-2 text-sm text-gray-500">
-          Created on {new Date(task.createdAt).toLocaleDateString()}
+          Created on {formatDate(task.createdAt)}
         </div>
       </div>
 
