@@ -17,7 +17,7 @@ const createTaskValidationSchema = z.object({
   projectId: z.string().min(1, 'Project ID is required'),
 });
 
-export type createTaskValidationSchema = z.infer<typeof createTaskValidationSchema>;
+export type createTaskInput = z.infer<typeof createTaskValidationSchema>;
 
 export async function POST(request: Request) {
   try {

@@ -1,6 +1,7 @@
 import { getProject } from 'lib/dal';
 import Link from 'next/link';
 import AddTaskButton from 'app/components/AddTaskButton';
+import TaskCard from 'app/components/TaskCard';
 
 export default async function ProjectPage({ params }: { params: { id: string } }) {
   const { id } = await params;
@@ -51,37 +52,7 @@ export default async function ProjectPage({ params }: { params: { id: string } }
               ) : (
                 <div className="space-y-4">
                   {project.tasks.map((task) => (
-                    <div
-                      key={task.id}
-                      className="border rounded-lg p-4 hover:bg-gray-50 transition-colors"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h3 className="text-lg font-medium text-gray-900">
-                            {task.title}
-                          </h3>
-                          {task.description && (
-                            <p className="mt-1 text-sm text-gray-600">
-                              {task.description}
-                            </p>
-                          )}
-                        </div>
-                        <span
-                          className={`px-2 py-1 text-xs font-medium rounded-full ${
-                            task.status === 'DONE'
-                              ? 'bg-green-100 text-green-800'
-                              : task.status === 'IN_PROGRESS'
-                              ? 'bg-yellow-100 text-yellow-800'
-                              : 'bg-gray-100 text-gray-800'
-                          }`}
-                        >
-                          {task.status.replace('_', ' ')}
-                        </span>
-                      </div>
-                      <div className="mt-2 text-sm text-gray-500">
-                        Created on {new Date(task.createdAt).toLocaleDateString()}
-                      </div>
-                    </div>
+                    <TaskCard key={task.id} task={task} />
                   ))}
                 </div>
               )}
@@ -91,5 +62,4 @@ export default async function ProjectPage({ params }: { params: { id: string } }
       </div>
     );
   }
-
 }

@@ -6,7 +6,8 @@ import { cache } from 'react';
 import { redirect } from 'next/navigation';
 import { db } from 'lib/db';
 import { Project, Task, User } from '@prisma/client';
-import { createTaskValidationSchema } from 'app/api/task/route';
+import { createTaskInput } from 'app/api/task/route';
+import { UpdateTaskInput } from 'app/api/task/[id]/route';
 
 type sessionReturnType = {
   isAuthorized: boolean
@@ -63,7 +64,7 @@ export const getProject = cache(async(projectId: string): Promise<ProjectWithTas
   }
 });
 
-export const createTask = async (task: createTaskValidationSchema): Promise<Task | ERROR_TYPES> => {
+export const createTask = async (task: createTaskInput): Promise<Task | ERROR_TYPES> => {
   const { isAuthorized, userId } = await verifySession();
   if(!isAuthorized || !userId) return ERROR_TYPES.NOT_AUTHORIZED
 
@@ -83,8 +84,37 @@ export const createTask = async (task: createTaskValidationSchema): Promise<Task
   }
 }
 
-export const getUser = async (): Promise<User | ERROR_TYPES> => {
 
+export const updateTask = async (taskId: string, data: UpdateTaskInput): Promise<Task | ERROR_TYPES> => {
+  const { isAuthorized, userId } = await verifySession();
+  if(!isAuthorized || !userId) return ERROR_TYPES.NOT_AUTHORIZED;
+
+  try {
+    // First verify the task exists and belongs to a project owned by the user
+    const task = await db.task.findFirst({
+      where: {
+        id: taskId,
+        project: {
+          ownerId: userId
+        }
+      }
+    });
+
+    if (!task) return ERROR_TYPES.NOT_FOUND;
+
+    const updatedTask = await db.task.update({
+      where: { id: taskId },
+      data
+    });
+
+    return updatedTask;
+  } catch (e) {
+    console.log('Failed to update task', e);
+    return ERROR_TYPES.NOT_FOUND;
+  }
+}
+
+export const getUser = async (): Promise<User | ERROR_TYPES> => {
   const cookieStore = await cookies();
   const token = cookieStore.get('auth-token');
   const secret = new TextEncoder().encode(
@@ -112,5 +142,4 @@ export const getUser = async (): Promise<User | ERROR_TYPES> => {
   }
 
   return ERROR_TYPES.NOT_FOUND;
-
 }
