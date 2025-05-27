@@ -25,17 +25,14 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const user = await getUser();
+  console.log(user);
 
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {
-          typeof user !== "number"
-          ? <Navbar userName={user?.email}/>
-          : <Navbar />
-        }
+        {typeof user !== "number" ? <Navbar userName={user.name} /> : ""}
         {children}
       </body>
     </html>

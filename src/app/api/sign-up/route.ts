@@ -1,12 +1,13 @@
-import { NextResponse } from 'next/server';
-import { z } from 'zod';
-import bcrypt from 'bcryptjs';
-import { db } from 'lib/db';
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import bcrypt from "bcryptjs";
+import { db } from "lib/db";
 
 // Validation schema
 const signUpSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
 export async function POST(request: Request) {
@@ -24,7 +25,7 @@ export async function POST(request: Request) {
 
     if (existingUser) {
       return NextResponse.json(
-        { error: 'Email already registered' },
+        { error: "Email already registered" },
         { status: 409 }
       );
     }
@@ -36,11 +37,13 @@ export async function POST(request: Request) {
     // Create user
     const user = await db.user.create({
       data: {
+        name: validatedData.name,
         email: validatedData.email,
         password: hashedPassword,
       },
       select: {
         id: true,
+        name: true,
         email: true,
         createdAt: true,
       },
@@ -48,23 +51,23 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       {
-        message: 'User registered successfully',
+        message: "User registered successfully",
         user,
       },
       { status: 201 }
     );
   } catch (error) {
-    console.error('Sign-up error:', error);
+    console.error("Sign-up error:", error);
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid input data', details: error.errors },
+        { error: "Invalid input data", details: error.errors },
         { status: 400 }
       );
     }
 
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }
