@@ -18,8 +18,9 @@ model User {
   role      String   @default("USER")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  projects  Project[] // Relation to projects
+  projects  Project[] // Projects owned by the user
   tasks     Task[]   // Tasks created by the user
+  projectMemberships ProjectMember[] // Projects where user is a member
 
   @@index([email])
 }
@@ -33,6 +34,7 @@ model Project {
   ownerId     String
   owner       User     @relation(fields: [ownerId], references: [id])
   tasks       Task[]
+  members     ProjectMember[] // New relation for team members
 
   @@index([ownerId])
 }
@@ -55,4 +57,20 @@ model Task {
 
   @@index([projectId])
   @@index([creatorId])
+}
+
+// New model for project members
+model ProjectMember {
+  id        String   @id @default(cuid())
+  role      String   @default("MEMBER") // MEMBER, ADMIN, VIEWER
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])
+  @@index([userId])
+  @@index([projectId])
 } 

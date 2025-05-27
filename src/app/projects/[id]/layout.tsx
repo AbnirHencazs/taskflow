@@ -2,6 +2,7 @@ import { getProject } from "lib/dal";
 import Link from "next/link";
 import AddTaskButton from "app/components/AddTaskButton";
 import ViewSwitcher from "app/components/ViewSwitcher";
+import { TeamMemberSearch } from "app/components/TeamMemberSearch";
 
 export default async function ProjectLayout({
   children,
@@ -13,7 +14,7 @@ export default async function ProjectLayout({
   const { id } = await params;
   const project = await getProject(id);
 
-  if (!project) {
+  if (!project || typeof project === "number") {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -30,10 +31,6 @@ export default async function ProjectLayout({
     );
   }
 
-  if (typeof project === "number") {
-    return null;
-  }
-
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -47,7 +44,10 @@ export default async function ProjectLayout({
                 Created on {new Date(project.createdAt).toLocaleDateString()}
               </p>
             </div>
-            <AddTaskButton projectId={project.id} />
+            <div className="flex items-center gap-4">
+              <TeamMemberSearch projectId={project.id} />
+              <AddTaskButton projectId={project.id} />
+            </div>
           </div>
           {project.description && (
             <p className="mt-4 text-gray-600">{project.description}</p>

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface User {
   id: string;
@@ -26,23 +26,24 @@ export default function DashboardPage() {
     const fetchData = async () => {
       try {
         // Fetch user data
-        const userResponse = await fetch('/api/me');
+        const userResponse = await fetch("/api/me");
         if (!userResponse.ok) {
-          throw new Error('Failed to fetch user data');
+          console.log(userResponse);
+          throw new Error("Failed to fetch user data");
         }
         const userData = await userResponse.json();
         setUser(userData.user);
 
         // Fetch projects
-        const projectsResponse = await fetch('/api/projects');
+        const projectsResponse = await fetch("/api/projects");
         if (!projectsResponse.ok) {
-          throw new Error('Failed to fetch projects');
+          throw new Error("Failed to fetch projects");
         }
         const projectsData = await projectsResponse.json();
         setProjects(projectsData.projects);
       } catch (error) {
-        console.error('Error fetching data:', error);
-        router.push('/login');
+        console.error("Error fetching data:", error);
+        router.push("/login");
       } finally {
         setIsLoading(false);
       }
@@ -83,7 +84,7 @@ export default function DashboardPage() {
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-lg font-medium">Your Projects</h2>
               <button
-                onClick={() => router.push('/projects/create')}
+                onClick={() => router.push("/projects/create")}
                 className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
               >
                 New Project
@@ -92,9 +93,11 @@ export default function DashboardPage() {
 
             {projects.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-gray-500">You haven&apos;t created any projects yet.</p>
+                <p className="text-gray-500">
+                  You haven&apos;t created any projects yet.
+                </p>
                 <button
-                  onClick={() => router.push('/projects/new')}
+                  onClick={() => router.push("/projects/new")}
                   className="mt-4 text-indigo-600 hover:text-indigo-700"
                 >
                   Create your first project
@@ -110,10 +113,13 @@ export default function DashboardPage() {
                   >
                     <h3 className="font-medium text-lg mb-2">{project.name}</h3>
                     {project.description && (
-                      <p className="text-gray-600 text-sm mb-4">{project.description}</p>
+                      <p className="text-gray-600 text-sm mb-4">
+                        {project.description}
+                      </p>
                     )}
                     <div className="text-xs text-gray-500">
-                      Created: {new Date(project.createdAt).toLocaleDateString()}
+                      Created:{" "}
+                      {new Date(project.createdAt).toLocaleDateString()}
                     </div>
                   </div>
                 ))}
