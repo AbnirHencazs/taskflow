@@ -1,11 +1,11 @@
-import { getProject } from 'lib/dal';
-import TaskCard from 'app/components/TaskCard';
-import KanbanBoard from 'app/components/KanbanBoard';
+import { getProject } from "lib/dal";
+import TaskCard from "app/components/TaskCard";
+import KanbanBoard from "app/components/KanbanBoard";
 
 export default async function BoardViewPage({
   params,
 }: {
-  params: { id: string; boardview: string };
+  params: Promise<{ id: string; boardview: string }>;
 }) {
   const { id, boardview } = await params;
   const project = await getProject(id);
@@ -24,7 +24,7 @@ export default async function BoardViewPage({
 
   // Handle different board views
   switch (boardview) {
-    case 'list':
+    case "list":
       return (
         <div className="space-y-4">
           {project.tasks.map((task) => (
@@ -32,9 +32,9 @@ export default async function BoardViewPage({
           ))}
         </div>
       );
-    case 'kanban':
+    case "kanban":
       return <KanbanBoard tasks={project.tasks} />;
-    case 'calendar':
+    case "calendar":
       // TODO: Implement Calendar view
       return (
         <div className="text-center py-12">
@@ -48,4 +48,4 @@ export default async function BoardViewPage({
         </div>
       );
   }
-} 
+}

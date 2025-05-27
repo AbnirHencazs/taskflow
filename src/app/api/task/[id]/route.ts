@@ -18,7 +18,7 @@ export type UpdateTaskInput = z.infer<typeof updateTaskValidationSchema>;
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const body = await request.json();
@@ -52,10 +52,11 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const result = await deleteTask(params.id);
+    const { id } = await params;
+    const result = await deleteTask(id);
 
     if (typeof result === "number") {
       return NextResponse.json(
