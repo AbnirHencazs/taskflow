@@ -84,6 +84,37 @@ export const createTask = async (task: createTaskInput): Promise<Task | ERROR_TY
   }
 }
 
+export async function updateTaskStatus(taskId: string, newStatus: string): Promise<Task | ERROR_TYPES> {
+  const { isAuthorized, userId } = await verifySession();
+  if(!isAuthorized || !userId) return ERROR_TYPES.NOT_AUTHORIZED;
+
+  try {
+    // First verify the task exists and belongs to a project owned by the user
+    const task = await db.task.findFirst({
+      where: {
+        id: taskId,
+        project: {
+          ownerId: userId
+        }
+      }
+    });
+
+    if (!task) return ERROR_TYPES.NOT_FOUND;
+
+    const updatedTask = await db.task.update({
+      where: { id: taskId },
+      data: { 
+        status: newStatus,
+        updatedAt: new Date()
+      }
+    });
+
+    return updatedTask;
+  } catch (e) {
+    console.log('Failed to update task status', e);
+    return ERROR_TYPES.NOT_FOUND;
+  }
+}
 
 export const updateTask = async (taskId: string, data: UpdateTaskInput): Promise<Task | ERROR_TYPES> => {
   const { isAuthorized, userId } = await verifySession();

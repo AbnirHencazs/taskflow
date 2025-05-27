@@ -1,7 +1,8 @@
 import { getProject } from 'lib/dal';
 import TaskCard from 'app/components/TaskCard';
+import KanbanBoard from 'app/components/KanbanBoard';
 
-export default async function boardviewPage({
+export default async function BoardViewPage({
   params,
 }: {
   params: { id: string; boardview: string };
@@ -32,12 +33,7 @@ export default async function boardviewPage({
         </div>
       );
     case 'kanban':
-      // TODO: Implement Kanban view
-      return (
-        <div className="text-center py-12">
-          <p className="text-gray-500">Kanban view coming soon!</p>
-        </div>
-      );
+      return <KanbanBoard tasks={project.tasks} />;
     case 'calendar':
       // TODO: Implement Calendar view
       return (
@@ -52,4 +48,4 @@ export default async function boardviewPage({
         </div>
       );
   }
-}
+} 
