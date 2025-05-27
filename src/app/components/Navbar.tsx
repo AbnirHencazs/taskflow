@@ -19,11 +19,11 @@ export function Navbar({ userName, userImage }: NavbarProps) {
     <nav className="bg-white shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <div className="flex items-center">
+          <div className="flex items-center flex-1">
             {showBackButton && (
               <button
                 onClick={() => router.back()}
-                className="mr-4 p-2 rounded-full hover:bg-gray-100 focus:outline-none"
+                className="mr-2 sm:mr-4 p-2 rounded-full hover:bg-gray-100 focus:outline-none"
               >
                 <svg
                   className="h-5 w-5 text-gray-600"
@@ -38,11 +38,12 @@ export function Navbar({ userName, userImage }: NavbarProps) {
                 </svg>
               </button>
             )}
-            <h1 className="text-lg font-semibold text-gray-900">{pageTitle}</h1>
+            <h1 className="text-base sm:text-lg font-semibold text-gray-900 truncate">
+              {pageTitle}
+            </h1>
           </div>
 
-          {/* Centered Logo */}
-          <div className="absolute left-1/2 transform -translate-x-1/2">
+          <div className="hidden sm:block absolute left-1/2 transform -translate-x-1/2">
             <button
               onClick={() => router.push("/")}
               className="flex items-center space-x-2 hover:opacity-80 transition-opacity rounded-xl"
@@ -55,13 +56,29 @@ export function Navbar({ userName, userImage }: NavbarProps) {
                 quality={100}
                 className="h-4 w-auto rounded-full"
               />
-              <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                 TaskFlow
               </span>
             </button>
           </div>
 
-          <div className="flex items-center">
+          <div className="sm:hidden absolute left-1/2 transform -translate-x-1/2">
+            <button
+              onClick={() => router.push("/")}
+              className="flex items-center space-x-1"
+            >
+              <Image
+                src="/TaskFlowLogo.png"
+                alt="TaskFlow Logo"
+                width={24}
+                height={24}
+                quality={100}
+                className="h-6 w-auto rounded-full"
+              />
+            </button>
+          </div>
+
+          <div className="flex items-center flex-1 justify-end">
             <UserProfile userName={userName} userImage={userImage} />
           </div>
         </div>
