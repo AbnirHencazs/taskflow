@@ -59,7 +59,7 @@ export default function Home() {
           <div className="md:w-1/2 mt-12 md:mt-0">
             <div className="relative h-[400px] w-full rounded-2xl overflow-hidden shadow-lg">
               <Image
-                src="/TaskFlowHero.png"
+                src={`${process.env.NEXT_PUBLIC_BASE_PATH}/TaskFlowHero.png`}
                 alt="Task Management Dashboard"
                 fill
                 quality={100}

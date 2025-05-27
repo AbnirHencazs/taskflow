@@ -1,15 +1,25 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { z } from 'zod';
-import { revalidateProjectPageData } from 'lib/actions';
+import { useState } from "react";
+import { z } from "zod";
+import { revalidateProjectPageData } from "lib/actions";
 
 const taskValidationSchema = z.object({
-  title: z.string().min(2, 'Task title is required').max(32, 'Title must be no longer than 32 characters'),
-  description: z.string().max(256, 'Description must be no longer than 256 characters').optional(),
-  status: z.enum(['TODO', 'IN_PROGRESS', 'DONE']).default('TODO'),
-  priority: z.enum(['LOW', 'MEDIUM', 'HIGH']).default('MEDIUM'),
-  estimatedTime: z.number().int().min(0, 'Estimated time must be a positive number').optional(),
+  title: z
+    .string()
+    .min(2, "Task title is required")
+    .max(32, "Title must be no longer than 32 characters"),
+  description: z
+    .string()
+    .max(256, "Description must be no longer than 256 characters")
+    .optional(),
+  status: z.enum(["TODO", "IN_PROGRESS", "DONE"]).default("TODO"),
+  priority: z.enum(["LOW", "MEDIUM", "HIGH"]).default("MEDIUM"),
+  estimatedTime: z
+    .number()
+    .int()
+    .min(0, "Estimated time must be a positive number")
+    .optional(),
 });
 
 export default function AddTaskButton({ projectId }: { projectId: string }) {
@@ -24,27 +34,31 @@ export default function AddTaskButton({ projectId }: { projectId: string }) {
 
     const formData = new FormData(e.currentTarget);
     const data = {
-      title: formData.get('title') as string,
-      description: formData.get('description') as string,
-      status: formData.get('status') as 'TODO' | 'IN_PROGRESS' | 'DONE',
-      priority: formData.get('priority') as 'LOW' | 'MEDIUM' | 'HIGH',
-      estimatedTime: formData.get('estimatedTime') ? 
-        parseInt(formData.get('estimatedTime') as string) : undefined,
+      title: formData.get("title") as string,
+      description: formData.get("description") as string,
+      status: formData.get("status") as "TODO" | "IN_PROGRESS" | "DONE",
+      priority: formData.get("priority") as "LOW" | "MEDIUM" | "HIGH",
+      estimatedTime: formData.get("estimatedTime")
+        ? parseInt(formData.get("estimatedTime") as string)
+        : undefined,
     };
 
     try {
       const validatedData = taskValidationSchema.parse(data);
-      const response = await fetch(`/api/task?projectId=${projectId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(validatedData),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_PATH}/api/task?projectId=${projectId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(validatedData),
+        }
+      );
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to create task');
+        throw new Error(error.message || "Failed to create task");
       }
 
       setIsOpen(false);
@@ -77,24 +91,42 @@ export default function AddTaskButton({ projectId }: { projectId: string }) {
 
       {isOpen && (
         <div className="fixed inset-0 flex items-center justify-center p-4 z-50">
-          <div className="fixed inset-0 bg-gray-500/30" onClick={() => setIsOpen(false)} />
+          <div
+            className="fixed inset-0 bg-gray-500/30"
+            onClick={() => setIsOpen(false)}
+          />
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-gray-900">Add New Task</h3>
+              <h3 className="text-lg font-medium text-gray-900">
+                Add New Task
+              </h3>
               <button
                 onClick={() => setIsOpen(false)}
                 className="text-gray-400 hover:text-gray-500"
               >
                 <span className="sr-only">Close</span>
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="title"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Title
                 </label>
                 <input
@@ -109,7 +141,10 @@ export default function AddTaskButton({ projectId }: { projectId: string }) {
               </div>
 
               <div>
-                <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="description"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Description
                 </label>
                 <textarea
@@ -119,12 +154,17 @@ export default function AddTaskButton({ projectId }: { projectId: string }) {
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
                 {errors.description && (
-                  <p className="mt-1 text-sm text-red-600">{errors.description}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.description}
+                  </p>
                 )}
               </div>
 
               <div>
-                <label htmlFor="status" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="status"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Status
                 </label>
                 <select
@@ -139,7 +179,10 @@ export default function AddTaskButton({ projectId }: { projectId: string }) {
               </div>
 
               <div>
-                <label htmlFor="priority" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="priority"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Priority
                 </label>
                 <select
@@ -154,7 +197,10 @@ export default function AddTaskButton({ projectId }: { projectId: string }) {
               </div>
 
               <div>
-                <label htmlFor="estimatedTime" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="estimatedTime"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Estimated Time (minutes)
                 </label>
                 <input
@@ -165,7 +211,9 @@ export default function AddTaskButton({ projectId }: { projectId: string }) {
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
                 {errors.estimatedTime && (
-                  <p className="mt-1 text-sm text-red-600">{errors.estimatedTime}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.estimatedTime}
+                  </p>
                 )}
               </div>
 
@@ -179,7 +227,7 @@ export default function AddTaskButton({ projectId }: { projectId: string }) {
                   disabled={isLoading}
                   className="inline-flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:col-start-2 sm:text-sm disabled:opacity-50"
                 >
-                  {isLoading ? 'Creating...' : 'Create Task'}
+                  {isLoading ? "Creating..." : "Create Task"}
                 </button>
                 <button
                   type="button"
@@ -195,4 +243,4 @@ export default function AddTaskButton({ projectId }: { projectId: string }) {
       )}
     </>
   );
-} 
+}

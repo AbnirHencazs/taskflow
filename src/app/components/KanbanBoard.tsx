@@ -110,13 +110,16 @@ export default function KanbanBoard({ tasks }: KanbanBoardProps) {
 
     try {
       // Call the API to update the task status
-      const response = await fetch(`/api/task/${taskId}/status`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status: targetColumnId }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_PATH}/api/task/${taskId}/status`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ status: targetColumnId }),
+        }
+      );
 
       if (!response.ok) {
         // If the API call fails, revert the optimistic update

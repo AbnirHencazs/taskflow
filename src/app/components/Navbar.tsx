@@ -49,7 +49,7 @@ export function Navbar({ userName, userImage }: NavbarProps) {
               className="flex items-center space-x-2 hover:opacity-80 transition-opacity rounded-xl"
             >
               <Image
-                src="/TaskFlowLogo.png"
+                src={`${process.env.NEXT_PUBLIC_BASE_PATH}/TaskFlowLogo.png`}
                 alt="TaskFlow Logo"
                 width={32}
                 height={32}

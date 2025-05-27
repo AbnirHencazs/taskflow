@@ -34,7 +34,9 @@ export function TeamMemberSearch({ projectId }: TeamMemberSearchProps) {
 
       try {
         const response = await fetch(
-          `/api/users/search?q=${encodeURIComponent(
+          `${
+            process.env.NEXT_PUBLIC_BASE_PATH
+          }/api/users/search?q=${encodeURIComponent(
             query
           )}&projectId=${projectId}`
         );
@@ -57,13 +59,16 @@ export function TeamMemberSearch({ projectId }: TeamMemberSearchProps) {
 
   const addMember = async (userId: string) => {
     try {
-      const response = await fetch(`/api/projects/${projectId}/members`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_PATH}/api/projects/${projectId}/members`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userId }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to add team member");
