@@ -1,12 +1,6 @@
-<<<<<<< HEAD
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { updateTask } from "lib/dal";
-=======
-import { NextResponse } from 'next/server';
-import { z } from 'zod';
-import { updateTask, deleteTask } from 'lib/dal';
->>>>>>> Implement task deletion operation
+import { updateTask, deleteTask } from "lib/dal";
 
 const updateTaskValidationSchema = z.object({
   title: z
@@ -62,10 +56,10 @@ export async function DELETE(
 ) {
   try {
     const result = await deleteTask(params.id);
-    
-    if (typeof result === 'number') {
+
+    if (typeof result === "number") {
       return NextResponse.json(
-        { message: 'Failed to delete task' },
+        { message: "Failed to delete task" },
         { status: 400 }
       );
     }
@@ -74,7 +68,7 @@ export async function DELETE(
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { message: 'Internal server error' },
+      { message: "Internal server error" },
       { status: 500 }
     );
   }
