@@ -1,6 +1,7 @@
-import { getProject } from 'lib/dal';
-import Link from 'next/link';
-import AddTaskButton from 'app/components/AddTaskButton';
+import { getProject } from "lib/dal";
+import Link from "next/link";
+import AddTaskButton from "app/components/AddTaskButton";
+import ViewSwitcher from "app/components/ViewSwitcher";
 
 export default async function ProjectLayout({
   children,
@@ -17,7 +18,7 @@ export default async function ProjectLayout({
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Error</h2>
-          <p className="text-gray-600 mb-4">{'Project not found'}</p>
+          <p className="text-gray-600 mb-4">{"Project not found"}</p>
           <Link
             href="/dashboard"
             className="text-indigo-600 hover:text-indigo-500"
@@ -39,7 +40,9 @@ export default async function ProjectLayout({
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">{project.name}</h1>
+              <h1 className="text-3xl font-bold text-gray-900">
+                {project.name}
+              </h1>
               <p className="mt-2 text-sm text-gray-600">
                 Created on {new Date(project.createdAt).toLocaleDateString()}
               </p>
@@ -53,11 +56,14 @@ export default async function ProjectLayout({
 
         <div className="bg-white shadow rounded-lg">
           <div className="px-4 py-5 sm:p-6">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Tasks</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-medium text-gray-900">Tasks</h2>
+              <ViewSwitcher />
+            </div>
             {children}
           </div>
         </div>
       </div>
     </div>
   );
-} 
+}
