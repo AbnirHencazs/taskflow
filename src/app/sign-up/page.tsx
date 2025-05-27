@@ -93,7 +93,7 @@ export default function SignUpPage() {
       }
 
       // Successful registration
-      router.push("/login?registered=true");
+      router.push("/dashboard");
     } catch (error) {
       console.error("Signup failed:", error);
       setErrors((prev) => ({
