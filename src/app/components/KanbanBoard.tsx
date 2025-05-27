@@ -12,7 +12,7 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TaskCard from "app/components/TaskCard";
 import { useDroppable } from "@dnd-kit/core";
 
@@ -26,22 +26,25 @@ const COLUMNS = [
   { id: "DONE", title: "Done" },
 ] as const;
 
-type ColumnId = typeof COLUMNS[number]['id'];
+type ColumnId = (typeof COLUMNS)[number]["id"];
 
-function DroppableColumn({ id, title, children }: { id: ColumnId; title: string; children: React.ReactNode }) {
+function DroppableColumn({
+  id,
+  title,
+  children,
+}: {
+  id: ColumnId;
+  title: string;
+  children: React.ReactNode;
+}) {
   const { setNodeRef } = useDroppable({
     id: id,
   });
 
   return (
-    <div
-      ref={setNodeRef}
-      className="bg-gray-50 rounded-lg p-4 min-h-[500px]"
-    >
+    <div ref={setNodeRef} className="bg-gray-50 rounded-lg p-4 min-h-[500px]">
       <h3 className="font-medium text-gray-900 mb-4">{title}</h3>
-      <div className="space-y-4">
-        {children}
-      </div>
+      <div className="space-y-4">{children}</div>
     </div>
   );
 }
@@ -63,6 +66,10 @@ export default function KanbanBoard({ tasks }: KanbanBoardProps) {
       },
     })
   );
+
+  useEffect(() => {
+    setLocalTasks(tasks);
+  }, [tasks]);
 
   const tasksByStatus = localTasks.reduce((acc, task) => {
     if (!acc[task.status]) {
@@ -99,9 +106,9 @@ export default function KanbanBoard({ tasks }: KanbanBoardProps) {
     try {
       // Call the API to update the task status
       const response = await fetch(`/api/task/${taskId}/status`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ status: targetColumnId }),
       });
@@ -110,13 +117,15 @@ export default function KanbanBoard({ tasks }: KanbanBoardProps) {
         // If the API call fails, revert the optimistic update
         setLocalTasks((prevTasks) =>
           prevTasks.map((task) =>
-            task.id === taskId ? { ...task, status: activeTask?.status || 'TODO' } : task
+            task.id === taskId
+              ? { ...task, status: activeTask?.status || "TODO" }
+              : task
           )
         );
-        throw new Error('Failed to update task status');
+        throw new Error("Failed to update task status");
       }
     } catch (error) {
-      console.error('Failed to update task status:', error);
+      console.error("Failed to update task status:", error);
       // The UI will be reverted to its previous state
     }
   };
@@ -133,10 +142,9 @@ export default function KanbanBoard({ tasks }: KanbanBoardProps) {
             {tasksByStatus[column.id]?.map((task) => (
               <DraggableTaskCard key={task.id} task={task} />
             ))}
-            {(!tasksByStatus[column.id] || tasksByStatus[column.id].length === 0) && (
-              <div className="text-center py-8 text-gray-500">
-                No tasks
-              </div>
+            {(!tasksByStatus[column.id] ||
+              tasksByStatus[column.id].length === 0) && (
+              <div className="text-center py-8 text-gray-500">No tasks</div>
             )}
           </DroppableColumn>
         ))}
@@ -147,4 +155,4 @@ export default function KanbanBoard({ tasks }: KanbanBoardProps) {
       </DragOverlay>
     </DndContext>
   );
-} 
+}
