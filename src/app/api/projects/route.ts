@@ -1,47 +1,33 @@
-import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { jwtVerify } from 'jose';
-import { db } from 'lib/db';
-import { z } from 'zod';
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { getProjects, createProject } from "lib/dal";
+import { ERROR_TYPES } from "lib/constants";
 
 const createProjectSchema = z.object({
-  name: z.string().min(1, 'Project name is required'),
+  name: z.string().min(1, "Project name is required"),
   description: z.string().optional(),
 });
 
 export async function GET() {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('auth-token');
+    const projects = await getProjects();
 
-    if (!token) {
+    if (projects === ERROR_TYPES.NOT_AUTHORIZED) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (projects === ERROR_TYPES.NOT_FOUND) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
+        { error: "Failed to fetch projects" },
+        { status: 404 }
       );
     }
 
-    const secret = new TextEncoder().encode(
-      process.env.JWT_SECRET || 'your-secret-key'
-    );
-
-    const { payload } = await jwtVerify(token.value, secret);
-    const userId = payload.userId as string;
-
-    const projects = await db.project.findMany({
-      where: {
-        ownerId: userId,
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
-
     return NextResponse.json({ projects });
   } catch (error) {
-    console.error('Error fetching projects:', error);
+    console.error("Error fetching projects:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }
@@ -49,48 +35,36 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('auth-token');
-
-    if (!token) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    const secret = new TextEncoder().encode(
-      process.env.JWT_SECRET || 'your-secret-key'
-    );
-
-    const { payload } = await jwtVerify(token.value, secret);
-    const userId = payload.userId as string;
-
     const body = await request.json();
     const validatedData = createProjectSchema.parse(body);
 
-    const project = await db.project.create({
-      data: {
-        name: validatedData.name,
-        description: validatedData.description,
-        ownerId: userId,
-      },
-    });
+    const project = await createProject(validatedData);
+
+    if (project === ERROR_TYPES.NOT_AUTHORIZED) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (project === ERROR_TYPES.NOT_CREATED) {
+      return NextResponse.json(
+        { error: "Failed to create project" },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({ project }, { status: 201 });
   } catch (error) {
-    console.error('Error creating project:', error);
+    console.error("Error creating project:", error);
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid input data', details: error.errors },
+        { error: "Invalid input data", details: error.errors },
         { status: 400 }
       );
     }
 
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }
-} 
+}

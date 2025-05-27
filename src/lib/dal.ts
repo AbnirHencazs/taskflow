@@ -232,3 +232,47 @@ export const deleteTask = async (
     return ERROR_TYPES.NOT_FOUND;
   }
 };
+
+export const getProjects = cache(async (): Promise<Project[] | ERROR_TYPES> => {
+  const { isAuthorized, userId } = await verifySession();
+  if (!isAuthorized || !userId) return ERROR_TYPES.NOT_AUTHORIZED;
+
+  try {
+    const projects = await db.project.findMany({
+      where: {
+        OR: [{ ownerId: userId }, { members: { some: { userId } } }],
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return projects;
+  } catch (error) {
+    console.error("Failed to fetch projects", error);
+    return ERROR_TYPES.NOT_FOUND;
+  }
+});
+
+export const createProject = async (data: {
+  name: string;
+  description?: string;
+}): Promise<Project | ERROR_TYPES> => {
+  const { isAuthorized, userId } = await verifySession();
+  if (!isAuthorized || !userId) return ERROR_TYPES.NOT_AUTHORIZED;
+
+  try {
+    const project = await db.project.create({
+      data: {
+        name: data.name,
+        description: data.description,
+        ownerId: userId,
+      },
+    });
+
+    return project;
+  } catch (error) {
+    console.error("Failed to create project", error);
+    return ERROR_TYPES.NOT_CREATED;
+  }
+};
