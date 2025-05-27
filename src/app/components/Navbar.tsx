@@ -1,53 +1,71 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { UserProfile } from './UserProfile';
-import { useNavbar } from 'app/hooks/useNavbar';
+import { useRouter } from "next/navigation";
+import { UserProfile } from "./UserProfile";
+import { useNavbar } from "app/hooks/useNavbar";
+import Image from "next/image";
 
 interface NavbarProps {
   userName?: string;
   userImage?: string;
 }
 
-export function Navbar({
-  userName,
-  userImage,
-}: NavbarProps) {
+export function Navbar({ userName, userImage }: NavbarProps) {
   const router = useRouter();
   const { pageTitle, showNavbar, showBackButton } = useNavbar();
 
-  if(!showNavbar) return null;
+  if (!showNavbar) return null;
   return (
     <nav className="bg-white shadow-sm">
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="flex justify-between items-center h-16">
-        <div className="flex items-center">
-          {showBackButton && (
-            <button
-              onClick={() => router.back()}
-              className="mr-4 p-2 rounded-full hover:bg-gray-100 focus:outline-none"
-            >
-              <svg
-                className="h-5 w-5 text-gray-600"
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          <div className="flex items-center">
+            {showBackButton && (
+              <button
+                onClick={() => router.back()}
+                className="mr-4 p-2 rounded-full hover:bg-gray-100 focus:outline-none"
               >
-                <path d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-          )}
-          <h1 className="text-lg font-semibold text-gray-900">{pageTitle}</h1>
-        </div>
+                <svg
+                  className="h-5 w-5 text-gray-600"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+            )}
+            <h1 className="text-lg font-semibold text-gray-900">{pageTitle}</h1>
+          </div>
 
-        <div className="flex items-center">
-          <UserProfile userName={userName} userImage={userImage} />
+          {/* Centered Logo */}
+          <div className="absolute left-1/2 transform -translate-x-1/2">
+            <button
+              onClick={() => router.push("/")}
+              className="flex items-center space-x-2 hover:opacity-80 transition-opacity rounded-xl"
+            >
+              <Image
+                src="/TaskFlowLogo.png"
+                alt="TaskFlow Logo"
+                width={32}
+                height={32}
+                quality={100}
+                className="h-4 w-auto rounded-full"
+              />
+              <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                TaskFlow
+              </span>
+            </button>
+          </div>
+
+          <div className="flex items-center">
+            <UserProfile userName={userName} userImage={userImage} />
+          </div>
         </div>
       </div>
-    </div>
-  </nav>
-  )
+    </nav>
+  );
 }
