@@ -15,6 +15,7 @@ export default function TaskModal({ isOpen, onClose, task }: TaskModalProps) {
   const [description, setDescription] = useState(task.description || '');
   const [status, setStatus] = useState(task.status);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -49,6 +50,33 @@ export default function TaskModal({ isOpen, onClose, task }: TaskModalProps) {
     }
   };
 
+  const handleDelete = async () => {
+    if (!confirm('Are you sure you want to delete this task?')) {
+      return;
+    }
+
+    setIsDeleting(true);
+    setError(null);
+
+    try {
+      const response = await fetch(`/api/task/${task.id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || 'Failed to delete task');
+      }
+
+      // Optimistically close the modal and refresh the page data
+      onClose();
+      revalidateProjectPageData(task.projectId);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Failed to delete task');
+      setIsDeleting(false);
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -58,6 +86,7 @@ export default function TaskModal({ isOpen, onClose, task }: TaskModalProps) {
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-medium text-gray-900">Edit Task</h3>
           <button
+            type="button"
             onClick={onClose}
             className="text-gray-400 hover:text-gray-500"
           >
@@ -115,7 +144,15 @@ export default function TaskModal({ isOpen, onClose, task }: TaskModalProps) {
             <p className="text-sm text-red-600">{error}</p>
           )}
 
-          <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+          <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-3 sm:gap-3">
+            <button
+              type="button"
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="inline-flex w-full justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:col-start-1 sm:text-sm disabled:opacity-50"
+            >
+              {isDeleting ? 'Deleting...' : 'Delete Task'}
+            </button>
             <button
               type="submit"
               disabled={isLoading}
@@ -126,7 +163,7 @@ export default function TaskModal({ isOpen, onClose, task }: TaskModalProps) {
             <button
               type="button"
               onClick={onClose}
-              className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:col-start-1 sm:mt-0 sm:text-sm"
+              className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:col-start-3 sm:mt-0 sm:text-sm"
             >
               Cancel
             </button>

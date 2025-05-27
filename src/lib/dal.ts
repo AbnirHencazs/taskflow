@@ -174,3 +174,31 @@ export const getUser = async (): Promise<User | ERROR_TYPES> => {
 
   return ERROR_TYPES.NOT_FOUND;
 }
+
+export const deleteTask = async (taskId: string): Promise<boolean | ERROR_TYPES> => {
+  const { isAuthorized, userId } = await verifySession();
+  if(!isAuthorized || !userId) return ERROR_TYPES.NOT_AUTHORIZED;
+
+  try {
+    // First verify the task exists and belongs to a project owned by the user
+    const task = await db.task.findFirst({
+      where: {
+        id: taskId,
+        project: {
+          ownerId: userId
+        }
+      }
+    });
+
+    if (!task) return ERROR_TYPES.NOT_FOUND;
+
+    await db.task.delete({
+      where: { id: taskId }
+    });
+
+    return true;
+  } catch (e) {
+    console.log('Failed to delete task', e);
+    return ERROR_TYPES.NOT_FOUND;
+  }
+}
