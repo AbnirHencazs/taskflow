@@ -42,9 +42,14 @@ function DroppableColumn({
   });
 
   return (
-    <div ref={setNodeRef} className="bg-gray-50 rounded-lg p-4 min-h-[500px]">
-      <h3 className="font-medium text-gray-900 mb-4">{title}</h3>
-      <div className="space-y-4">{children}</div>
+    <div
+      ref={setNodeRef}
+      className="bg-gray-50 rounded-lg p-3 sm:p-4 min-h-[300px] sm:min-h-[500px]"
+    >
+      <h3 className="font-medium text-gray-900 mb-3 sm:mb-4 text-sm sm:text-base">
+        {title}
+      </h3>
+      <div className="space-y-3 sm:space-y-4">{children}</div>
     </div>
   );
 }
@@ -136,7 +141,7 @@ export default function KanbanBoard({ tasks }: KanbanBoardProps) {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         {COLUMNS.map((column) => (
           <DroppableColumn key={column.id} id={column.id} title={column.title}>
             {tasksByStatus[column.id]?.map((task) => (
@@ -144,7 +149,9 @@ export default function KanbanBoard({ tasks }: KanbanBoardProps) {
             ))}
             {(!tasksByStatus[column.id] ||
               tasksByStatus[column.id].length === 0) && (
-              <div className="text-center py-8 text-gray-500">No tasks</div>
+              <div className="text-center py-6 sm:py-8 text-sm sm:text-base text-gray-500">
+                No tasks
+              </div>
             )}
           </DroppableColumn>
         ))}

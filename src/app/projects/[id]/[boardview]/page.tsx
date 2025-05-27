@@ -16,8 +16,10 @@ export default async function BoardViewPage({
 
   if (project.tasks.length === 0) {
     return (
-      <div className="text-center py-12">
-        <p className="text-gray-500">No tasks yet. Create your first task!</p>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="text-center py-12">
+          <p className="text-gray-500">No tasks yet. Create your first task!</p>
+        </div>
       </div>
     );
   }
@@ -26,25 +28,35 @@ export default async function BoardViewPage({
   switch (boardview) {
     case "list":
       return (
-        <div className="space-y-4">
-          {project.tasks.map((task) => (
-            <TaskCard key={task.id} task={task} />
-          ))}
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="space-y-4 max-w-4xl mx-auto">
+            {project.tasks.map((task) => (
+              <TaskCard key={task.id} task={task} />
+            ))}
+          </div>
         </div>
       );
     case "kanban":
-      return <KanbanBoard tasks={project.tasks} />;
+      return (
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <KanbanBoard tasks={project.tasks} />
+        </div>
+      );
     case "calendar":
       // TODO: Implement Calendar view
       return (
-        <div className="text-center py-12">
-          <p className="text-gray-500">Calendar view coming soon!</p>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="text-center py-12">
+            <p className="text-gray-500">Calendar view coming soon!</p>
+          </div>
         </div>
       );
     default:
       return (
-        <div className="text-center py-12">
-          <p className="text-gray-500">Invalid view type</p>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="text-center py-12">
+            <p className="text-gray-500">Invalid view type</p>
+          </div>
         </div>
       );
   }
