@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -50,9 +50,12 @@ export function UserProfile({
       >
         <div className="relative w-8 h-8 rounded-full overflow-hidden">
           <Image
-            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
-              userName
-            )}&background=random&length=1&rounded=true&bold=true&color=random`}
+            src={
+              `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                userName
+              )}&background=random&length=1&rounded=true&bold=true&color=random` ||
+              userImage
+            }
             alt={userName}
             fill
             className="object-cover"
