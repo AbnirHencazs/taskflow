@@ -115,12 +115,12 @@ export async function updateTaskStatus(
   if (!isAuthorized || !userId) return ERROR_TYPES.NOT_AUTHORIZED;
 
   try {
-    // First verify the task exists and belongs to a project owned by the user
+    // First verify the task exists and belongs to a project where user is either owner or member
     const task = await db.task.findFirst({
       where: {
         id: taskId,
         project: {
-          ownerId: userId,
+          OR: [{ ownerId: userId }, { members: { some: { userId } } }],
         },
       },
     });
