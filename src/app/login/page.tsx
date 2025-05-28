@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { revalidateRootLayout } from "lib/actions";
 
 interface FormData {
   email: string;
@@ -69,6 +70,9 @@ export default function LoginPage() {
       if (!response.ok) {
         throw new Error(data.error || "Invalid credentials");
       }
+
+      // Revalidate the root layout to update the user data
+      await revalidateRootLayout();
 
       router.push("/dashboard");
     } catch (error) {
