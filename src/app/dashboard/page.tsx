@@ -1,31 +1,25 @@
-import { redirect } from "next/navigation";
 import UserInfo from "app/components/dashboard/UserInfo";
 import ProjectList from "app/components/dashboard/ProjectList";
 import { getUser, getProjects } from "lib/dal";
 
 export default async function DashboardPage() {
-  try {
-    const [user, projects] = await Promise.all([getUser(), getProjects()]);
+  const [user, projects] = await Promise.all([getUser(), getProjects()]);
 
-    if (typeof projects === "number" || typeof user === "number") {
-      return (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Error</h2>
-            <p className="text-gray-600 mb-4">{"Error"}</p>
-          </div>
-        </div>
-      );
-    }
-
+  if (typeof projects === "number" || typeof user === "number") {
     return (
-      <>
-        <UserInfo user={user} />
-        <ProjectList projects={projects} />
-      </>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Error</h2>
+          <p className="text-gray-600 mb-4">{"Error"}</p>
+        </div>
+      </div>
     );
-  } catch (error) {
-    console.error("Error fetching dashboard data:", error);
-    redirect("/login");
   }
+
+  return (
+    <>
+      <UserInfo user={user} />
+      <ProjectList projects={projects} />
+    </>
+  );
 }
