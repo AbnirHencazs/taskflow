@@ -15,9 +15,11 @@ import {
 import { useEffect, useState } from "react";
 import TaskCard from "app/components/TaskCard";
 import { useDroppable } from "@dnd-kit/core";
+import { useSSE } from "app/hooks/useSSE";
 
 interface KanbanBoardProps {
   tasks: Task[];
+  projectId: string;
 }
 
 const COLUMNS = [
@@ -54,9 +56,10 @@ function DroppableColumn({
   );
 }
 
-export default function KanbanBoard({ tasks }: KanbanBoardProps) {
+export default function KanbanBoard({ tasks, projectId }: KanbanBoardProps) {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [localTasks, setLocalTasks] = useState(tasks);
+  const { data, error, isConnected } = useSSE(projectId);
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -75,6 +78,13 @@ export default function KanbanBoard({ tasks }: KanbanBoardProps) {
   useEffect(() => {
     setLocalTasks(tasks);
   }, [tasks]);
+
+  useEffect(() => {
+    if (data) {
+      console.log(data);
+      setLocalTasks(data);
+    }
+  }, [data]);
 
   const tasksByStatus = localTasks.reduce((acc, task) => {
     if (!acc[task.status]) {

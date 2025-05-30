@@ -39,7 +39,7 @@ export default async function BoardViewPage({
     case "kanban":
       return (
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <KanbanBoard tasks={project.tasks} />
+          <KanbanBoard tasks={project.tasks} projectId={id} />
         </div>
       );
     case "calendar":

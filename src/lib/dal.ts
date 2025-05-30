@@ -9,6 +9,7 @@ import { Project, Task, User } from "@prisma/client";
 import { createTaskInput } from "app/api/task/route";
 import { UpdateTaskInput } from "app/api/task/[id]/route";
 import { ERROR_TYPES } from "lib/constants";
+import { updateTracker } from "./updateTracker";
 
 type sessionReturnType = {
   isAuthorized: boolean;
@@ -99,7 +100,8 @@ export const createTask = async (
         creatorId: userId,
       },
     });
-
+    // updateTracker.hasUpdate(task.projectId);
+    // updateTracker.setLastUpdate(task.projectId, new Date(Date.now()));
     return taskCreated;
   } catch (e) {
     console.log("Failed to create task", e);
@@ -134,7 +136,7 @@ export async function updateTaskStatus(
         updatedAt: new Date(),
       },
     });
-
+    updateTracker.setLastUpdate(task.projectId, new Date(Date.now()));
     return updatedTask;
   } catch (e) {
     console.log("Failed to update task status", e);
