@@ -59,7 +59,7 @@ function DroppableColumn({
 export default function KanbanBoard({ tasks, projectId }: KanbanBoardProps) {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [localTasks, setLocalTasks] = useState(tasks);
-  const { data, error, isConnected } = useSSE(projectId);
+  const { data } = useSSE(projectId);
 
   const sensors = useSensors(
     useSensor(MouseSensor, {

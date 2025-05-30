@@ -1,6 +1,6 @@
 // src/app/api/events/route.ts
 import { getProject } from "lib/dal";
-import { updateTracker } from "lib/updateTracker";
+// import { updateTracker } from "lib/updateTracker";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -34,20 +34,20 @@ export async function GET(request: Request) {
         // }
         try {
           // Get the last known update time for this project
-          const lastUpdate = updateTracker.getLastUpdate(projectId);
+          // const lastUpdate = updateTracker.getLastUpdate(projectId);
 
           // Fetch current project data
           const project = await getProject(projectId);
 
           if (project && typeof project !== "number") {
             // Get the most recent updatedAt date from all tasks
-            const mostRecentTaskUpdate = project.tasks.reduce(
-              (latest, task) => {
-                const taskUpdate = new Date(task.updatedAt);
-                return taskUpdate > latest ? taskUpdate : latest;
-              },
-              new Date(0)
-            ); // Start with epoch time as initial value
+            // const mostRecentTaskUpdate = project.tasks.reduce(
+            //   (latest, task) => {
+            //     const taskUpdate = new Date(task.updatedAt);
+            //     return taskUpdate > latest ? taskUpdate : latest;
+            //   },
+            //   new Date(0)
+            // ); // Start with epoch time as initial value
 
             // console.log(lastUpdate, mostRecentTaskUpdate);
             // If we have a last update and it's different from current
