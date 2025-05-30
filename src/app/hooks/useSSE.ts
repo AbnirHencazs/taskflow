@@ -17,11 +17,19 @@ export function useSSE(projectId: string) {
         setIsConnected(true);
         setError(null);
       };
-
-      eventSource.onmessage = (event) => {
+      eventSource.addEventListener("connected", (event) => {
+        console.log("Connected to server sent events", event.data);
+      });
+      eventSource.addEventListener("taskUpdated", (event) => {
         const newData = JSON.parse(event.data);
         setData(newData);
-      };
+      });
+
+      // eventSource.onmessage = (event) => {
+      //   // const newData = JSON.parse(event.data);
+      //   // setData(newData);
+      //   console.log("Connected to server sent events", event.data);
+      // };
 
       eventSource.onerror = (error) => {
         console.error("SSE Error:", error);

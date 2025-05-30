@@ -12,7 +12,9 @@ export async function GET(request: Request) {
   const stream = new ReadableStream({
     async start(controller) {
       // Send initial connection message
-      controller.enqueue(encoder.encode("data: connected\n\n"));
+      controller.enqueue(
+        encoder.encode("event: connected\ndata:{helloWorld: 'helloworld'}\n\n")
+      );
 
       // Set up interval to check for updates
       const interval = setInterval(async () => {
@@ -51,14 +53,16 @@ export async function GET(request: Request) {
             // If we have a last update and it's different from current
             // if (lastUpdate && mostRecentTaskUpdate > lastUpdate) {
             controller.enqueue(
-              encoder.encode(`data: ${JSON.stringify(project.tasks)}\n\n`)
+              encoder.encode(
+                `event: taskUpdated\ndata: ${JSON.stringify(project.tasks)}\n\n`
+              )
             );
             // Update the tracker with the new timestamp
             // updateTracker.setLastUpdate(projectId, mostRecentTaskUpdate);
             // }
             // If we don't have a last update yet, set it
             // else if (!lastUpdate) {
-            // updateTracker.setLastUpdate(projectId, mostRecentTaskUpdate);
+            //   updateTracker.setLastUpdate(projectId, mostRecentTaskUpdate);
             // }
           }
         } catch (error) {
